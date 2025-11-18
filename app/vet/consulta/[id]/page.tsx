@@ -5,7 +5,6 @@ import Header from "@/app/componentes/header";
 import { getConsultaById, updateConsulta, getPetById, getVets } from "@/app/lib/api";
 import Link from "next/link";
 
-// 1. Definição da interface para a Consulta (para remover 'any' e tipar 'prev')
 interface ConsultaData {
   id: number;
   vetId: number;
@@ -27,7 +26,6 @@ export default function VetConsultaDetalhes() {
   const { id } = useParams() as { id: string };
   const consultaId = Number(id);
 
-  // Usando a interface para tipar o estado
   const [consulta, setConsulta] = useState<ConsultaData | null>(null);
   const [pet, setPet] = useState<PetData | null>(null);
   const [vets, setVets] = useState<any[]>([]);
@@ -52,11 +50,9 @@ export default function VetConsultaDetalhes() {
       setConsulta(c);
       setObservacoes(c.observacoes || "");
         
-      // Carrega o pet para linkar ao perfil
       const p = await getPetById(c.petId);
       setPet(p);
       
-      // Filtra para não poder encaminhar para si mesmo
       setVets(vList.filter((v:any) => v.id !== user.id));
       setLoading(false);
     }).catch(err => {
@@ -68,9 +64,7 @@ export default function VetConsultaDetalhes() {
 
   const isEditable = consulta?.status === 'pendente' || consulta?.status === 'em_andamento';
 
-  // 2. Incluindo "pendente" no tipo de status para permitir o encaminhamento
   async function handleUpdateStatus(status: ConsultaData['status'], newVetId?: number) {
-    // 3. Ajuste no guard: permite prosseguir se for um encaminhamento (newVetId) ou se for uma consulta editável.
     if (!consulta || (!isEditable && !newVetId)) return;
 
     setMsg("Atualizando...");
@@ -162,7 +156,6 @@ export default function VetConsultaDetalhes() {
                   Cancelar Consulta
                 </button>
 
-                {/* ENCAMINHAMENTO */}
                 <form onSubmit={handleEncaminhar} className="flex gap-2 items-center bg-gray-50 p-3 rounded-lg border">
                   <label className="font-medium text-gray-700">Encaminhar para:</label>
                   <select value={encaminharVetId} onChange={e => setEncaminharVetId(e.target.value)} className="p-2 border rounded">
