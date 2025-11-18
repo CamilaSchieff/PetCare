@@ -59,7 +59,7 @@ export async function createConsulta(payload: any) {
 export async function updateConsulta(id: number, payload: any) {
   return fetchJSON(`/consultas/${id}`, { method: "PUT", body: JSON.stringify(payload) });
 }
-// NOVO: Função para obter consulta por ID
+// consulta por ID
 export async function getConsultaById(id: number) {
   return fetchJSON(`/consultas?id=${id}`).then(r => r[0] || null);
 }
