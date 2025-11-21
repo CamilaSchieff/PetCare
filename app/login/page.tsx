@@ -3,8 +3,13 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/app/lib/api";
+import { Chewy } from "next/font/google";
 
-// --- COMPONENTE LOGIN PAGE ---
+const chewy = Chewy({
+  weight: "400",
+  subsets: ["latin"],
+});
+
 export default function LoginPage() {
   const nav = useRouter();
   const [email, setEmail] = useState("");
@@ -19,7 +24,6 @@ export default function LoginPage() {
     try {
       const user = await login(email, senha);
 
-      // --- 1. LÓGICA DE ERRO ---
       // Se não encontrar o usuário (u == null)
       if (!user) {
         setErro("Conta não encontrada. Verifique seu e-mail e senha, ou crie uma conta.");
@@ -31,7 +35,6 @@ export default function LoginPage() {
         setErro(`Conta encontrada, mas você selecionou o perfil errado. Por favor, selecione "Sou ${user.tipo}".`);
         return;
       }
-      // --- FIM LÓGICA DE ERRO ---
 
       // SALVA NO LOCALSTORAGE
       localStorage.setItem("pc_user", JSON.stringify(user));
@@ -53,24 +56,19 @@ export default function LoginPage() {
   return (
     <div className="h-screen bg-[#106944] flex items-center justify-center relative overflow-hidden p-4">
 
-      {/* Shapes de fundo (para um visual mais moderno) */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-[#0d7d61] rounded-full blur-3xl opacity-50 -translate-x-24 -translate-y-20 hidden md:block" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0d7d61] rounded-full blur-3xl opacity-50 translate-x-24 translate-y-20 hidden md:block" />
 
-      {/* Conteúdo Centralizado */}
       <div className="relative z-10 flex flex-col items-center">
-
-        {/* LOGO PETCARE+ */}
-        <h1 className="text-6xl font-extrabold tracking-wide mb-10">
-          <span className="text-[#ff9900]">PetCare</span>
-          <span className="text-white">+</span>
+        <h1 className={`${chewy.className} text-6xl font-extrabold tracking-wide mb-10`}>
+            <span className="text-[#ff9900]">PetCare</span>
+            <span className="text-white">+</span>
         </h1>
 
         <h2 className="text-white text-2xl font-bold mb-6 tracking-wider">
           FAÇA SEU LOGIN
         </h2>
 
-        {/* FORMULÁRIO */}
         <form
           onSubmit={handleLogin}
           className="bg-[#ffece1] px-10 py-8 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col gap-5"
@@ -87,7 +85,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Campo Senha */}
           <div>
             <label className="text-sm text-gray-700 font-bold tracking-wide">SENHA</label>
             <input
@@ -98,7 +95,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Opções Tutor/Veterinário */}
           <div className="flex items-center gap-4 text-sm text-gray-700 justify-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -125,14 +121,12 @@ export default function LoginPage() {
             </label>
           </div>
 
-          {/* Mensagem de Erro*/}
           {erro && (
             <div className="text-red-700 text-sm text-center font-medium bg-red-100 border border-red-300 p-3 rounded-lg mt-1">
               {erro}
             </div>
           )}
 
-          {/* Botão de Envio */}
           <button
             type="submit"
             className="w-full bg-[#0b6b53] text-white py-3 rounded-xl mt-2 text-center font-bold tracking-wider transition duration-300
@@ -142,7 +136,6 @@ export default function LoginPage() {
               FAZER LOGIN
           </button>
 
-          {/* Link para Cadastro */}
           <a href="/cadastro" className="text-center text-gray-700 text-sm underline hover:text-[#ff9900] transition">
             Ainda não é cadastrado? Cadastre!
           </a>

@@ -40,16 +40,12 @@ export default function VetHome() {
         }}
       />
 
-      {/* FUNDO VERDE + FORMAS DECORATIVAS */}
       <div className="min-h-screen w-full bg-[#065f46] pt-32 px-4 relative overflow-hidden">
 
-        {/* Forma esquerda */}
         <div className="absolute top-10 left-0 w-96 h-96 bg-[#0b7a5c] opacity-30 rounded-full blur-3xl" />
 
-        {/* Forma direita */}
         <div className="absolute top-32 right-0 w-96 h-96 bg-[#0b7a5c] opacity-30 rounded-full blur-3xl" />
 
-        {/* CONTEÚDO PRINCIPAL */}
         <div className="relative z-10 max-w-4xl mx-auto">
 
           <h1 className="text-white text-3xl font-bold mb-8">CONSULTAS DO DIA</h1>
@@ -65,19 +61,16 @@ export default function VetHome() {
                   key={c.id}
                   className="bg-[#FFF4EA] p-6 rounded-3xl shadow-md"
                 >
-                  {/* Data */}
                   <p className="text-[#0d7d61] text-lg font-bold mb-4">
                     {c.data}
                   </p>
 
-                  {/* Cabeçalho das colunas */}
                   <div className="flex justify-between font-semibold text-gray-600 text-sm mb-2">
                     <span>Motivo</span>
                     <span>Pet</span>
                     <span>Horário</span>
                   </div>
 
-                  {/* Dados */}
                   <div className="flex justify-between text-gray-700">
                     <span>{c.motivo || "—"}</span>
                     <span>{c.petNome}</span>

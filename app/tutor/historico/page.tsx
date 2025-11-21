@@ -32,19 +32,19 @@ export default function TutorHistorico() {
       <main className="max-w-4xl mx-auto pt-28 p-6">
         <h1 className="text-2xl font-bold mb-4">Histórico de Consultas</h1>
         {loading ? <div>Carregando...</div> :
-          consultas.length === 0 ? <div>Sem histórico.</div> :
+          consultas.length === 0 ? <div>Sem histórico</div> :
           <div className="space-y-4">
             {consultas.map(c=>(
               <div key={c.id} className="bg-white p-4 rounded shadow">
                 <div className="flex justify-between">
                   <div>
-                    <div className="font-semibold">{findPetName(c.petId)}</div>
-                    <div className="text-sm text-gray-600">{c.data} — {c.hora}</div>
+                    <div className="font-semibold text-black">{findPetName(c.petId)}</div>
+                    <div className="text-sm text-gray-800">{c.data} — {c.hora}</div>
                   </div>
-                  <div className="text-sm text-gray-600">{c.status}</div>
+                  <div className="text-sm text-gray-800">{c.status}</div>
                 </div>
-                <div className="mt-2 text-gray-700">{c.observacoes || "Sem observações."}</div>
-                <div className="mt-2 text-xs text-gray-500">Atendido por: Vet ID {c.vetId}</div>
+                <div className="mt-2 text-gray-900">{c.observacoes || "Sem observações."}</div>
+                <div className="mt-2 text-xs text-gray-700">Atendido por: Vet ID {c.vetId}</div>
               </div>
             ))}
           </div>
