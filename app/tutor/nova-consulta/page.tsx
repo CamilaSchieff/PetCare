@@ -74,25 +74,19 @@ export default function NovaConsulta() {
 
   return (
     <>
-      <Header
-        user={user}
-        onLogout={() => { localStorage.removeItem("pc_user"); router.push("/login"); }}
+      <Header user={user} onLogout={() => { localStorage.removeItem("pc_user"); router.push("/login"); }}
       />
 
-      {/* Fundo verde */}
       <main className="pt-32 min-h-screen bg-[#0d7d61] flex flex-col items-center">
 
-        {/* Botão de título */}
         <button className="bg-[#fa8f6b] text-white font-semibold px-10 py-3 rounded-full text-lg shadow-md mb-10">
           AGENDAR CONSULTA
         </button>
 
-        {/* Card central */}
         <div className="bg-[#ffefe3] p-10 rounded-3xl shadow-xl w-[90%] max-w-2xl border border-[#ead7c5]">
 
           <form onSubmit={handleSubmit} className="space-y-6">
 
-            {/* Pet */}
             <div>
               <label className="text-[#0b6b53] font-bold text-sm">Pet</label>
               <select
@@ -109,7 +103,6 @@ export default function NovaConsulta() {
               </select>
             </div>
 
-            {/* Veterinário */}
             <div>
               <label className="text-[#0b6b53] font-bold text-sm">Veterinário</label>
 
@@ -138,7 +131,6 @@ export default function NovaConsulta() {
               </button>
             </div>
 
-            {/* Tipo de atendimento — você pode ajustar depois para dropdown real */}
             <div>
               <label className="text-[#0b6b53] font-bold text-sm">Tipo de atendimento</label>
               <select
@@ -151,7 +143,6 @@ export default function NovaConsulta() {
               </select>
             </div>
 
-            {/* Data */}
             <div>
               <label className="text-[#0b6b53] font-bold text-sm">Data</label>
               <input
@@ -162,7 +153,6 @@ export default function NovaConsulta() {
               />
             </div>
 
-            {/* Hora */}
             <div>
               <label className="text-[#0b6b53] font-bold text-sm">Hora</label>
               <input
@@ -173,7 +163,6 @@ export default function NovaConsulta() {
               />
             </div>
 
-            {/* Obs */}
             <textarea
               placeholder="Observações (opcional)"
               value={obs}
@@ -181,12 +170,10 @@ export default function NovaConsulta() {
               className="w-full p-3 rounded-xl border border-gray-300 text-gray-700 bg-white"
             />
 
-            {/* Mensagem */}
             {msg && (
               <p className="text-center text-sm text-[#d05c48] font-semibold">{msg}</p>
             )}
-
-            {/* Botão final */}
+            
             <button
               type="submit"
               className="w-full bg-[#fa8f6b] text-white font-bold py-3 rounded-full shadow-md"

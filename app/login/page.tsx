@@ -3,11 +3,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/app/lib/api";
+import { Poppins } from "next/font/google";
 import { Chewy } from "next/font/google";
 
 const chewy = Chewy({
   weight: "400",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"], 
 });
 
 export default function LoginPage() {
@@ -60,12 +66,12 @@ export default function LoginPage() {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#0d7d61] rounded-full blur-3xl opacity-50 translate-x-24 translate-y-20 hidden md:block" />
 
       <div className="relative z-10 flex flex-col items-center">
+
         <h1 className={`${chewy.className} text-6xl font-extrabold tracking-wide mb-10`}>
-            <span className="text-[#ff9900]">PetCare</span>
-            <span className="text-white">+</span>
+            <span className="text-[#ff9900]">PetCare+</span>
         </h1>
 
-        <h2 className="text-white text-2xl font-bold mb-6 tracking-wider">
+        <h2 className={`${poppins.className} text-white text-2xl font-bold mb-6 tracking-wider`}>
           FAÇA SEU LOGIN
         </h2>
 
