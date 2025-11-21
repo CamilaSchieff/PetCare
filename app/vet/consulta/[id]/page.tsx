@@ -1,182 +1,178 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter, useParams } from "next/navigation";
 import Header from "@/app/componentes/header";
-import { getConsultaById, updateConsulta, getPetById, getVets } from "@/app/lib/api";
-import Link from "next/link";
+import { getConsultasByVet, getPetById, updateConsulta } from "@/app/lib/api";
+import { useRouter } from "next/navigation";
 
-interface ConsultaData {
-  id: number;
-  vetId: number;
-  petId: number;
-  status: "pendente" | "em_andamento" | "finalizada" | "cancelada";
-  observacoes: string;
-  data: string;
-  hora: string;
-}
-
-interface PetData {
-  id: number;
-  nome: string;
-  especie: string;
-}
-
-export default function VetConsultaDetalhes() {
+export default function VetAgenda() {
   const router = useRouter();
-  const { id } = useParams() as { id: string };
-  const consultaId = Number(id);
-
-  const [consulta, setConsulta] = useState<ConsultaData | null>(null);
-  const [pet, setPet] = useState<PetData | null>(null);
-  const [vets, setVets] = useState<any[]>([]);
-  const [observacoes, setObservacoes] = useState("");
-  const [encaminharVetId, setEncaminharVetId] = useState("");
-  const [msg, setMsg] = useState("");
+  const [consultas, setConsultas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingConsulta, setEditingConsulta] = useState<any>(null);
 
   const pc = typeof window !== "undefined" ? localStorage.getItem("pc_user") : null;
   const user = pc ? JSON.parse(pc) : null;
 
   useEffect(() => {
-    if (!user || user.tipo !== "veterinario" || !consultaId) {
+    if (!user || user.tipo !== "veterinario") {
       router.push("/login");
       return;
     }
-    Promise.all([
-      getConsultaById(consultaId),
-      getVets()
-    ]).then(async ([c, vList]) => {
-      if (!c) { setMsg("Consulta não encontrada."); setLoading(false); return; }
-      setConsulta(c);
-      setObservacoes(c.observacoes || "");
-        
-      const p = await getPetById(c.petId);
-      setPet(p);
-      
-      setVets(vList.filter((v:any) => v.id !== user.id));
+    loadConsultas();
+  }, []);
+
+  async function loadConsultas() {
+    setLoading(true);
+   try {
+     const allConsultas = await getConsultasByVet(user.id);
+     const futuras = allConsultas.filter(
+        (c: any) => c.status === "pendente" || c.status === "em_andamento"
+      );
+
+      const consultasComDetalhes = await Promise.all(
+        futuras.map(async (c: any) => {
+          const pet = await getPetById(c.petId);
+          const petNome = pet?.nome || `Pet ${c.petId}`;
+          const tutor = await fetch(`/api/users/${c.tutorId}`)
+            .then((res) => res.json())
+            .catch(() => null);
+          const tutorNome = tutor?.nome || `Tutor ${c.tutorId}`;
+
+          return {
+           ...c,
+            petNome,
+            tutorNome,
+            pet,
+         };
+        })
+     );
+
+      consultasComDetalhes.sort((a, b) => {
+        const dateTimeA = `${a.data} ${a.hora}`;
+       const dateTimeB = `${b.data} ${b.hora}`;
+       return dateTimeA.localeCompare(dateTimeB);
+     });
+
+      setConsultas(consultasComDetalhes);
+    } catch (error) {
+      console.error("Erro ao carregar consultas:", error);
+    } finally {
       setLoading(false);
-    }).catch(err => {
-      setMsg("Erro ao carregar dados.");
-      setLoading(false);
-      console.error(err);
-    });
-  }, [consultaId]);
-
-  const isEditable = consulta?.status === 'pendente' || consulta?.status === 'em_andamento';
-
-  async function handleUpdateStatus(status: ConsultaData['status'], newVetId?: number) {
-    if (!consulta || (!isEditable && !newVetId)) return;
-
-    setMsg("Atualizando...");
-    try {
-      const payload: any = { status, observacoes };
-      
-      if (newVetId) {
-        payload.vetId = newVetId; 
-        payload.status = "pendente"; 
-      }
-
-      await updateConsulta(consulta.id, payload);
-      setMsg(`Consulta ${newVetId ? 'encaminhada' : status} com sucesso!`);
-
-      setConsulta((prev: ConsultaData | null) => {
-        if (!prev) return null;
-        return ({ ...prev, status: payload.status, observacoes, vetId: newVetId || prev.vetId })
-      });
-      
-      if (status === "finalizada" || status === "cancelada" || newVetId) {
-        setTimeout(() => router.push("/vet/agenda"), 1000);
-      }
-      
-    } catch (err) {
-      setMsg("Erro ao atualizar consulta.");
-      console.error(err);
     }
   }
 
-  async function handleEncaminhar(e: React.FormEvent) {
-    e.preventDefault();
-    if (!encaminharVetId) { setMsg("Selecione um veterinário para encaminhar."); return; }
-    await handleUpdateStatus("pendente", Number(encaminharVetId));
+
+  async function concluirConsulta(consulta: any) {
+    await updateConsulta(consulta.id, { status: "concluida" });
+    loadConsultas();
   }
 
-  if (loading) return <div className="p-6">Carregando detalhes da consulta...</div>;
-  if (!consulta) return <div className="p-6">{msg || "Consulta não encontrada."}</div>;
+  async function salvarLaudo(consulta: any, laudo: string) {
+    await updateConsulta(consulta.id, { laudo, status: "concluida" });
+    setEditingConsulta(null);
+    loadConsultas();
+  }
+
+  async function remarcarConsulta(consulta: any, novaData: string, novaHora: string) {
+    await updateConsulta(consulta.id, { data: novaData, hora: novaHora });
+    setEditingConsulta(null);
+    loadConsultas();
+  }
+
+  const ConsultaCard = ({ consulta }: { consulta: any }) => {
+    const [laudo, setLaudo] = useState(consulta.laudo || "");
+    const [novaData, setNovaData] = useState(consulta.data);
+    const [novaHora, setNovaHora] = useState(consulta.hora);
+
+    return (
+      <div className="border border-gray-200 p-4 rounded-lg shadow-sm bg-white">
+        <div className="text-lg font-bold text-[#0b6b53]">{consulta.petNome}</div>
+        <div className="text-sm text-gray-600 mt-1">
+          <span className="font-semibold">Data/Hora:</span> {consulta.data} às {consulta.hora}
+        </div>
+        <div className="text-xs mt-2">
+          <strong>Status:</strong>{" "}
+          <span
+            className={`px-2 py-0.5 rounded-full uppercase font-medium ${
+              consulta.status === "pendente"
+                ? "bg-yellow-100 text-yellow-800"
+                : consulta.status === "em_andamento"
+                ? "bg-blue-100 text-blue-800"
+                : "bg-green-100 text-green-800"
+            }`}
+          >
+            {consulta.status.replace("_", " ")}
+          </span>
+        </div>
+
+        <div className="mt-3 space-y-2">
+          {consulta.status !== "concluida" && (
+            <button
+              onClick={() => concluirConsulta(consulta)}
+              className="bg-green-600 text-white py-1 px-3 rounded hover:bg-green-700"
+            >
+              Concluir
+            </button>
+          )}
+
+          <div>
+            <input
+              type="text"
+              value={laudo}
+              onChange={(e) => setLaudo(e.target.value)}
+              placeholder="Digite o laudo"
+              className="border p-1 rounded w-full mt-1"
+            />
+            <button
+              onClick={() => salvarLaudo(consulta, laudo)}
+              className="bg-blue-600 text-white py-1 px-3 rounded mt-1 hover:bg-blue-700"
+            >
+              Salvar Laudo
+            </button>
+          </div>
+
+          <div className="flex gap-2 mt-1">
+            <input
+              type="date"
+              value={novaData}
+              onChange={(e) => setNovaData(e.target.value)}
+              className="border p-1 rounded"
+            />
+            <input
+              type="time"
+              value={novaHora}
+              onChange={(e) => setNovaHora(e.target.value)}
+              className="border p-1 rounded"
+            />
+            <button
+              onClick={() => remarcarConsulta(consulta, novaData, novaHora)}
+              className="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600"
+            >
+              Remarcar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
-      <Header user={user} onLogout={() => { localStorage.removeItem("pc_user"); router.push("/login"); }} />
+      <Header user={user} />
       <main className="max-w-4xl mx-auto pt-28 p-6">
-        <h1 className="text-3xl font-extrabold text-[#0b6b53] mb-6">Consulta {consulta.id}</h1>
+        <h1 className="text-3xl font-extrabold text-[#0b6b53] mb-6">Minha Agenda</h1>
 
-        <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 space-y-4">
-          <h2 className="text-xl font-bold">Detalhes</h2>
-          
-          <p><strong>Pet:</strong> 
-            {pet ? <Link href={`/tutor/pet/${pet.id}`} className="text-blue-600 underline ml-1">{pet.nome} ({pet.especie})</Link> : `ID ${consulta.petId}`}
-          </p>
-          <p><strong>Data/Hora:</strong> {consulta.data} às {consulta.hora}</p>
-          <p>
-            <strong>Status:</strong> 
-            <span className={`px-2 py-0.5 rounded-full uppercase font-medium ml-1 
-              ${consulta.status === 'finalizada' ? 'bg-green-100 text-green-800' : 
-                consulta.status === 'cancelada' ? 'bg-red-100 text-red-800' : 
-                'bg-yellow-100 text-yellow-800'
-              }`}
-            >
-              {consulta.status.replace('_', ' ')}
-            </span>
-          </p>
-
-          {isEditable && (
-            <>
-              <h3 className="text-lg font-bold pt-4">Observações e Ações</h3>
-              <textarea
-                value={observacoes}
-                onChange={e => setObservacoes(e.target.value)}
-                placeholder="Observações do atendimento, diagnóstico, tratamento, etc."
-                className="w-full p-2 border rounded min-h-32"
-              />
-
-              <div className="flex gap-4 flex-wrap">
-                <button 
-                  onClick={() => handleUpdateStatus("finalizada")} 
-                  disabled={!observacoes}
-                  className="px-4 py-2 bg-green-700 text-white rounded disabled:opacity-50 hover:bg-green-800 transition"
-                >
-                  Finalizar Consulta
-                </button>
-                
-                <button 
-                  onClick={() => handleUpdateStatus("cancelada")} 
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                >
-                  Cancelar Consulta
-                </button>
-
-                <form onSubmit={handleEncaminhar} className="flex gap-2 items-center bg-gray-50 p-3 rounded-lg border">
-                  <label className="font-medium text-gray-700">Encaminhar para:</label>
-                  <select value={encaminharVetId} onChange={e => setEncaminharVetId(e.target.value)} className="p-2 border rounded">
-                    <option value="">-- selecione outro vet --</option>
-                    {vets.map((v:any) => <option key={v.id} value={v.id}>{v.nome}</option>)}
-                  </select>
-                  <button type="submit" className="px-4 py-2 bg-orange-500 text-white rounded disabled:opacity-50 hover:bg-orange-600 transition" disabled={!encaminharVetId}>
-                    Encaminhar
-                  </button>
-                </form>
-              </div>
-            </>
-          )}
-          
-          {!isEditable && (
-            <div className="pt-4">
-              <h3 className="text-lg font-bold">Observações Registradas:</h3>
-              <p className="mt-2 p-3 bg-gray-100 rounded border whitespace-pre-wrap">{consulta.observacoes || "Sem observações."}</p>
-            </div>
-          )}
-
-          {msg && <div className="mt-4 text-sm text-center text-red-600 font-medium">{msg}</div>}
-        </div>
+        {loading ? (
+          <div>Carregando consultas...</div>
+        ) : consultas.length === 0 ? (
+          <div className="text-gray-500 p-4 bg-gray-50 rounded-lg">Sem consultas agendadas.</div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {consultas.map((c) => (
+              <ConsultaCard key={c.id} consulta={c} />
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

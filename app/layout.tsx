@@ -4,8 +4,7 @@ import "./globals.css";
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Header from "@/app/componentes/header";
-import { Chewy } from "next/font/google";
-import { Poppins } from "next/font/google";
+import { Chewy, Poppins } from "next/font/google";
 
 const chewy = Chewy({
   weight: "400",

@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/app/lib/api";
-import { Poppins } from "next/font/google";
-import { Chewy } from "next/font/google";
+import { Chewy, Poppins } from "next/font/google";
 
 const chewy = Chewy({
   weight: "400",
@@ -61,9 +60,13 @@ export default function LoginPage() {
 
       <div className="relative z-10 flex flex-col items-center">
 
-        <h1 className={`${chewy.className} text-6xl font-extrabold tracking-wide mb-10`}>
-            <span className="text-[#ff9900]">PetCare+</span>
-        </h1>
+      <h1
+        className={`${chewy.className} text-6xl tracking-wide mb-10`}
+        style={{ textShadow: "2px 2px 10px rgba(0,0,0,0.4)" }}
+      >
+        <span className="text-[#ff9900]">PetCare</span>
+        <span className="text-white">+</span>
+      </h1>
 
         <h2 className={`${poppins.className} text-white text-2xl font-bold mb-6 tracking-wider`}>
           FAÇA SEU LOGIN

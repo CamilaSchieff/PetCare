@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Header from "@/app/componentes/header";
-import { getConsultasByVet } from "@/app/lib/api";
+import { getConsultasDoDia } from "@/app/lib/api";
 import { useRouter } from "next/navigation";
 
 export default function VetHome() {
@@ -18,9 +18,12 @@ export default function VetHome() {
       const parsed = JSON.parse(storedUser);
       setVet(parsed);
 
-      getConsultasByVet(parsed.id)
-        .then((data) => setConsultas(data))
-        .catch((err) => console.error(err))
+      getConsultasDoDia(parsed.id)
+        .then(data => {
+          data.sort((a: { horario: string; }, b: { horario: any; }) => a.horario.localeCompare(b.horario));
+          setConsultas(data);
+        })
+        .catch((err: any) => console.error(err))
         .finally(() => setLoading(false));
     } else {
       setLoading(false);
@@ -41,19 +44,15 @@ export default function VetHome() {
       />
 
       <main className="min-h-screen w-full bg-[#106944] pt-32 px-6 relative overflow-hidden">
-
-        {/* **BLOBs decorativos igual referência** */}
         <div className="absolute top-10 left-0 w-96 h-96 bg-[#0b7a5c] opacity-30 rounded-full blur-3xl" />
         <div className="absolute top-32 right-0 w-96 h-96 bg-[#0b7a5c] opacity-30 rounded-full blur-3xl" />
 
         <div className="relative z-10 max-w-4xl mx-auto">
 
-          {/* **Título igual referência** */}
           <h1 className="text-white text-2xl md:text-3xl font-extrabold mb-8">
             CONSULTAS DO DIA
           </h1>
 
-          {/* **Sem consultas** */}
           {consultas.length === 0 ? (
             <div className="bg-[#FFF4EA] text-center p-6 rounded-3xl text-gray-700 shadow-lg">
               Nenhuma consulta agendada para hoje.
@@ -61,28 +60,33 @@ export default function VetHome() {
           ) : (
             <div className="flex flex-col gap-8">
               {consultas.map((c: any) => (
-                <div
-                  key={c.id}
-                  className="bg-[#FFF4EA] p-6 rounded-3xl shadow-lg"
-                >
-                  {/* Data da consulta */}
+                <div key={c.id} className="bg-[#FFF4EA] p-6 rounded-3xl shadow-lg">
+
                   <p className="text-[#0d7d61] text-lg font-bold mb-4">
                     {c.data}
                   </p>
 
-                  {/* Cabeçalho das informações */}
-                  <div className="flex justify-between font-semibold text-gray-600 text-sm mb-1">
-                    <span>Motivo</span>
+                  <div className="grid grid-cols-4 font-semibold text-gray-600 text-sm mb-1">
                     <span>Pet</span>
+                    <span>Tutor</span>
                     <span>Horário</span>
+                    <span>Status</span>
                   </div>
 
-                  {/* Conteúdo da consulta */}
-                  <div className="flex justify-between text-gray-700">
-                    <span>{c.motivo || "—"}</span>
-                    <span>{c.petNome || "—"}</span>
+                  <div className="grid grid-cols-4 text-gray-700">
+                    <span>{c.petNome}</span>
+                    <span>{c.tutorNome}</span>
                     <span>{c.horario}</span>
+                    <span className="capitalize">{c.status}</span>
                   </div>
+
+                  <button
+                    onClick={() => router.push(`/vet/registrar/${c.id}`)}
+                    className="mt-4 bg-[#0d7d61] text-white px-4 py-2 rounded-xl shadow-md hover:brightness-90 transition"
+                  >
+                    Registrar
+                  </button>
+
                 </div>
               ))}
             </div>

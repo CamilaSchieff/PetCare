@@ -6,7 +6,9 @@
       "email": "camila@gmail.com",
       "senha": "123",
       "tipo": "veterinario",
-      "dadosExtras": {}
+      "dadosExtras": {},
+      "crmv": "5552",
+      "especialidade": "Pele"
     },
     {
       "id": "f015",
@@ -59,14 +61,14 @@
   ],
   "consultas": [
     {
-      "id": "e369",
-      "petId": null,
-      "tutorId": "3f38",
-      "vetId": 8778,
       "data": "2025-11-17",
       "hora": "17:35",
-      "status": "pendente",
-      "observacoes": "problema de pele"
+      "id": "e369"
+    },
+    {
+      "data": "2025-11-22",
+      "hora": "16:00",
+      "id": "aa26"
     }
   ]
 }
