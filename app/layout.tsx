@@ -1,4 +1,3 @@
-// src/app/layout.tsx
 "use client";
 
 import "./globals.css";
@@ -15,7 +14,7 @@ const chewy = Chewy({
 
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "600", "700"], // opcional, escolha os pesos que precisa
+  weight: ["400", "600", "700"], 
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

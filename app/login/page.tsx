@@ -1,4 +1,3 @@
-// src/app/login/page.tsx 
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,23 +29,18 @@ export default function LoginPage() {
     try {
       const user = await login(email, senha);
 
-      // Se não encontrar o usuário (u == null)
       if (!user) {
         setErro("Conta não encontrada. Verifique seu e-mail e senha, ou crie uma conta.");
         return;
       }
 
-      // Se encontrar, mas o TIPO estiver errado
       if (user.tipo !== tipo) {
         setErro(`Conta encontrada, mas você selecionou o perfil errado. Por favor, selecione "Sou ${user.tipo}".`);
         return;
       }
 
-      // SALVA NO LOCALSTORAGE
       localStorage.setItem("pc_user", JSON.stringify(user));
 
-
-      // REDIRECIONAMENTO
       if (user.tipo === "tutor") {
         nav.push("/tutor/home");
       } else {
@@ -80,7 +74,6 @@ export default function LoginPage() {
           className="bg-[#ffece1] px-10 py-8 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col gap-5"
         >
 
-          {/* Campo E-mail */}
           <div>
             <label className="text-sm text-gray-700 font-bold tracking-wide">E-MAIL</label>
             <input

@@ -1,4 +1,3 @@
-// src/app/vet/agenda/page.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import Header from "@/app/componentes/header";
@@ -24,13 +23,11 @@ export default function VetAgenda() {
             const allConsultas = await getConsultasByVet(user.id);
             const futuras = allConsultas.filter((c: any) => c.status === "pendente" || c.status === "em_andamento");
 
-// Resolve Pet Names
             const consultasComPetNome = await Promise.all(futuras.map(async (c: any) => {
                 const pet = await getPetById(c.petId);
                 return { ...c, petNome: pet?.nome || `Pet ${c.petId}` };
             }));
 
-// Ordenar por data e hora
             consultasComPetNome.sort((a, b) => {
                 const dateTimeA = `${a.data} ${a.hora}`;
                 const dateTimeB = `${b.data} ${b.hora}`;

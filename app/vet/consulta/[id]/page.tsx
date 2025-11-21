@@ -72,14 +72,13 @@ export default function VetConsultaDetalhes() {
       const payload: any = { status, observacoes };
       
       if (newVetId) {
-        payload.vetId = newVetId; // Novo veterinário (para encaminhamento)
-        payload.status = "pendente"; // Volta a ser pendente para o novo vet
+        payload.vetId = newVetId; 
+        payload.status = "pendente"; 
       }
 
       await updateConsulta(consulta.id, payload);
       setMsg(`Consulta ${newVetId ? 'encaminhada' : status} com sucesso!`);
-      
-      // 4. Tipagem do 'prev' e uso do status do payload
+
       setConsulta((prev: ConsultaData | null) => {
         if (!prev) return null;
         return ({ ...prev, status: payload.status, observacoes, vetId: newVetId || prev.vetId })
@@ -98,7 +97,6 @@ export default function VetConsultaDetalhes() {
   async function handleEncaminhar(e: React.FormEvent) {
     e.preventDefault();
     if (!encaminharVetId) { setMsg("Selecione um veterinário para encaminhar."); return; }
-    // A chamada agora está tipada corretamente
     await handleUpdateStatus("pendente", Number(encaminharVetId));
   }
 

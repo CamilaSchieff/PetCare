@@ -7,7 +7,7 @@ import { registerUser } from "@/app/lib/api";
 export default function CadastroPage() {
   const router = useRouter();
 
-  // estados separados para cada formulário
+
   const [tutor, setTutor] = useState({ email: "", username: "", senha: "" });
   const [vet, setVet] = useState({ email: "", username: "", senha: "" });
 
@@ -16,7 +16,7 @@ export default function CadastroPage() {
   async function cadastrar(tipo: "tutor" | "veterinario") {
    const dados = tipo === "tutor" ? tutor : vet;
 
-   // validação
+
    if (!dados.email.trim() || !dados.username.trim() || !dados.senha.trim()) {
      setMsg("Preencha todos os campos antes de continuar.");
      return;
@@ -46,7 +46,7 @@ export default function CadastroPage() {
       <main
         style={{
           minHeight: "100vh",
-          background: "#0a6a46",
+          background: "#106944",
           padding: "90px",
           display: "flex",
           flexDirection: "column",
@@ -70,7 +70,6 @@ export default function CadastroPage() {
             justifyContent: "center",
           }}
         >
-          {/* CARD TUTOR */}
           <div
             style={{
               width: 330,
@@ -132,7 +131,6 @@ export default function CadastroPage() {
             </div>
           </div>
 
-          {/* CARD VETERINÁRIO */}
           <div
             style={{
               width: 330,

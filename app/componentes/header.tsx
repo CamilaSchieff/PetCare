@@ -1,6 +1,18 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { Chewy } from "next/font/google";
+import { Poppins } from "next/font/google";
+
+const chewy = Chewy({
+  weight: "400",
+  subsets: ["latin"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"], 
+});
 
 interface HeaderProps {
   user?: {
@@ -14,9 +26,14 @@ export default function Header({ user, onLogout }: HeaderProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-[#F4EEDF] border-b border-black/5 px-6 md:px-12 py-5 flex justify-between items-center z-50">
-
-      <Link href="/" className="text-3xl font-bold text-[#FF7F50]">
+    <header
+      className={`
+        fixed top-0 left-0 w-full bg-[#F4EEDF] border-b border-black/5 
+        px-6 md:px-12 py-5 flex justify-between items-center z-50
+        ${poppins.className}
+      `}
+      >
+      <Link href="/" className={`${chewy.className} text-3xl font-bold text-[#FF7F50]`}>
         PetCare+
       </Link>
 

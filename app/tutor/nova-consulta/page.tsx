@@ -77,7 +77,7 @@ export default function NovaConsulta() {
       <Header user={user} onLogout={() => { localStorage.removeItem("pc_user"); router.push("/login"); }}
       />
 
-      <main className="pt-32 min-h-screen bg-[#0d7d61] flex flex-col items-center">
+      <main className="pt-32 min-h-screen bg-[#106944] flex flex-col items-center">
 
         <button className="bg-[#fa8f6b] text-white font-semibold px-10 py-3 rounded-full text-lg shadow-md mb-10">
           AGENDAR CONSULTA

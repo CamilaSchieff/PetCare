@@ -78,15 +78,14 @@ export default function TutorHome() {
         }}
       />
 
-      <main className="pt-32 bg-[#0d7d61] min-h-screen pb-20">
+      <main className="pt-32 bg-[#106944] min-h-screen pb-20">
         <div className="max-w-6xl mx-auto px-6">
-          <h1 className="text-4xl font-extrabold text-white mb-10">
+          <div className="bg-[#FF8F63] text-white font-semibold text-lg px-6 py-2 rounded-full shadow-md mb-10 inline-block">
             Olá, {user.nome}
-          </h1>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
 
-            {/* MEUS PETS */}
             <div className="bg-[#f7efe6] shadow-xl p-8 rounded-2xl border border-[#e7d7c9]">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-[#0b6b53]">Meus Pets</h3>
@@ -116,7 +115,6 @@ export default function TutorHome() {
               </div>
             </div>
 
-            {/* CONSULTAS */}
             <div className="bg-[#f7efe6] shadow-xl p-8 rounded-2xl border border-[#e7d7c9]">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-2xl font-bold text-[#0b6b53]">Próximas Consultas</h3>
